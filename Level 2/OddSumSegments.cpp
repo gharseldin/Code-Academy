@@ -4,81 +4,61 @@ using namespace std;
 
 typedef long long ll;
 
-void prefixSum(int *num, int n);
-void permutate(int *num, int n, int position, int k, int *section, bool odd, int barrier);
-
 int main()
 {
-    int q, n, k, *num, *section;
+    int q, n, k, *num, *section, counter = 0, sum = 0;
     cin >> q;
     for (int i = 0; i < q; i++)
     {
         cin >> n >> k;
-        num = new int(n);
-        section = new int(k);
+        if (k > n)
+        {
+            cout << "NO" << endl;
+            return 0;
+        }
+        num = new int[n];
+        section = new int[k];
         for (int j = 0; j < k; j++)
             section[j] = -1;
         for (int j = 0; j < n; j++)
             cin >> num[j];
-        prefixSum(num, n);
-        permutate(num, n, 0, k, section, true, 0);
-        if (section[k - 1] == n)
+        int position = 0;
+        while (position < n)
+        {
+            if (counter < k - 1)
+            {
+                if (num[position] & 1)
+                {
+                    section[counter] = position + 1;
+                    counter++;
+                }
+            }
+            else
+            {
+                break;
+            }
+            position++;
+        }
+        while (position < n)
+        {
+            if (num[position] & 1)
+            {
+                sum++;
+            }
+            position++;
+        }
+        if (sum & 1)
         {
             cout << "YES" << endl;
-            for (int l = 0; l < k; l++)
-            {
-                cout << section[l] << (l == k - 1 ? "\n" : " ");
-            }
+            for (int m = 0; m < k - 1; m++)
+                cout << section[m] << " ";
+            cout << n << endl;
         }
         else
         {
             cout << "NO" << endl;
         }
+        sum = 0;
+        counter = 0;
     }
 }
-
-void prefixSum(int *num, int n)
-{
-    for (int i = 1; i < n; i++)
-    {
-        num[i] = num[i] + num[i - 1];
-    }
-}
-
-void permutate(int *num, int n, int position, int k, int *section, bool odd, int barrier)
-{
-    if (k < n)
-        return;
-    for (int i = 0; i < k - 1; i++)
-        section[i] = i;
-}
-
-//void permutate(int *num, int n, int position, int k, int *section, bool odd, int barrier){
-//    if(section[k-1] == n)
-//        return;
-//    if(position == n)
-//        return;
-//    if(barrier == k)
-//        return;
-//    if(odd){
-//        while(position<n && !(num[position]&1)){
-//            position++;
-//        }
-//        section[barrier] = position;
-//        permutate(num, n, position+1, k, section, !odd, barrier+1);
-//        if(section[k-1] == n)
-//            return;
-//        section[barrier] = -1;
-//        permutate(num, n, position+1, k, section, odd, barrier);
-//    }else{
-//        while(position<n && (num[position]&1)){
-//            position++;
-//        }
-//        section[barrier] = position;
-//        permutate(num, n, position+1, k, section, !odd, barrier+1);
-//        if(section[k-1] == n)
-//            return;
-//        section[barrier] = -1;
-//        permutate(num, n, position+1, k, section, odd, barrier);
-//    }
-//}
